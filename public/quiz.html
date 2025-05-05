@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Fazer o Quiz</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; }
+    button { margin-top: 10px; }
+    .correta { color: green; }
+    .errada { color: red; }
+  </style>
+</head>
+<body>
+  <h1>Quiz</h1>
+  <div id="quizContainer"></div>
+  <p id="feedback"></p>
+
+  <script>
+    let perguntas = [];
+    let indiceAtual = 0;
+
+    async function carregarPerguntas() {
+      const res = await fetch('/perguntas');
+      perguntas = await res.json();
+      mostrarPergunta();
+    }
+
+    function mostrarPergunta() {
+  const container = document.getElementById('quizContainer');
+  const feedback = document.getElementById('feedback');
+
+  feedback.textContent = '';
+
+  if (indiceAtual >= perguntas.length) {
+    container.innerHTML = "<h2>Fim do quiz!</h2>";
+    return;
+  }
+
+  const p = perguntas[indiceAtual];
+  container.innerHTML = `
+    <h2>${p.pergunta}</h2>
+    ${p.alternativas.map((alt, i) => `
+      <button onclick="responder(${i})">${i + 1}. ${alt}</button>
+    `).join('<br>')}
+    <br><br>
+    <button id="proximaBtn" style="display:none;">Próxima Pergunta</button>
+  `;
+
+  document.getElementById('proximaBtn').addEventListener('click', () => {
+    indiceAtual++;
+    mostrarPergunta();
+  });
+}
+    function responder(escolha) {
+      const p = perguntas[indiceAtual];
+      const feedback = document.getElementById('feedback');
+      const proximaBtn = document.getElementById('proximaBtn');
+
+      if (escolha === p.correta) {
+        feedback.textContent = "✅ Resposta correta!";
+        feedback.className = 'correta';
+      } else {
+        feedback.textContent = `❌ Errado! A resposta correta era: ${p.alternativas[p.correta]}`;
+        feedback.className = 'errada';
+      }
+
+      document.querySelectorAll('#quizContainer button').forEach(btn => {
+        if (btn.id !== "proximaBtn") btn.disabled = true;
+      });
+
+      proximaBtn.style.display = 'inline-block';
+    }
+
+    carregarPerguntas();
+  </script>
+</body>
+</html>

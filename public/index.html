@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz</title>
+</head>
+<body>
+  <h1>Adicionar Pergunta</h1>
+  <form id="quizForm">
+    <input type="text" placeholder="Pergunta" id="pergunta" required><br>
+    <input type="text" placeholder="Alternativa 1" id="alt1" required><br>
+    <input type="text" placeholder="Alternativa 2" id="alt2" required><br>
+    <input type="text" placeholder="Alternativa 3" id="alt3" required><br>
+    <input type="text" placeholder="Alternativa 3" id="alt4" required><br>
+    <input type="number" placeholder="Índice da correta (0-2)" id="correta" required><br>
+    <button type="submit">Salvar</button>
+  </form>
+
+  <h2>Perguntas já cadastradas:</h2>
+  <ul id="listaPerguntas"></ul>
+
+  <script>
+    const form = document.getElementById('quizForm');
+    const lista = document.getElementById('listaPerguntas');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const pergunta = {
+        pergunta: document.getElementById('pergunta').value,
+        alternativas: [
+          document.getElementById('alt1').value,
+          document.getElementById('alt2').value,
+          document.getElementById('alt3').value,
+          document.getElementById('alt4').value
+        ],
+        correta: parseInt(document.getElementById('correta').value)
+      };
+
+      await fetch('/adicionar-pergunta', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(pergunta)
+      });
+
+      carregarPerguntas();
+      form.reset();
+    });
+
+    async function carregarPerguntas() {
+      const res = await fetch('/perguntas');
+      const perguntas = await res.json();
+
+      lista.innerHTML = '';
+      perguntas.forEach((p, i) => {
+        const li = document.createElement('li');
+        li.textContent = `${i + 1}. ${p.pergunta}`;
+        lista.appendChild(li);
+      });
+    }
+
+    carregarPerguntas();
+  </script>
+</body>
+</html>
