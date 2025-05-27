@@ -1,13 +1,14 @@
 {
-  "name": "meu-quiz",
+  "name": "quiz-app",
   "version": "1.0.0",
-  "description": "Aplicativo de Quiz",
+  "description": "Quiz com perguntas, edição e exclusão via JSON",
   "main": "server.js",
-  "bin": "server.js",   
   "scripts": {
     "start": "node server.js"
   },
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.18.2"
   }
 }

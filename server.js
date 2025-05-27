@@ -1,47 +1,41 @@
 const express = require('express');
 const fs = require('fs');
-const path = require('path');
 const app = express();
-
-const QUIZ_FILE = path.join(__dirname, 'quiz.json');
+const PORT = 3023;
 
 app.use(express.json());
 app.use(express.static('public'));
 
-// Endpoint para adicionar pergunta
-app.post('/adicionar-pergunta', (req, res) => {
-  const novaPergunta = req.body;
+const FILE = 'quiz.json';
 
-  fs.readFile(QUIZ_FILE, 'utf8', (err, data) => {
-    let perguntas = [];
-
-    if (!err && data) {
-      try {
-        perguntas = JSON.parse(data);
-      } catch (e) {
-        console.error('Erro ao fazer parse do JSON');
-      }
-    }
-
-    perguntas.push(novaPergunta);
-
-    fs.writeFile(QUIZ_FILE, JSON.stringify(perguntas, null, 2), err => {
-      if (err) {
-        console.error('Erro ao salvar:', err);
-        return res.status(500).send('Erro ao salvar');
-      }
-
-      res.send('Pergunta salva com sucesso!');
-    });
-  });
-});
-
-// Endpoint para obter perguntas
 app.get('/perguntas', (req, res) => {
-  fs.readFile(QUIZ_FILE, 'utf8', (err, data) => {
-    if (err) return res.status(500).send('Erro ao ler arquivo');
-    res.send(data);
-  });
+  const data = JSON.parse(fs.readFileSync(FILE));
+  res.json(data);
 });
 
-app.listen(3010, () => console.log('Servidor rodando em http://localhost:3010'));
+app.post('/adicionar-pergunta', (req, res) => {
+  const data = JSON.parse(fs.readFileSync(FILE));
+  data.push(req.body);
+  fs.writeFileSync(FILE, JSON.stringify(data, null, 2));
+  res.sendStatus(200);
+});
+
+app.put('/editar-pergunta/:id', (req, res) => {
+  const data = JSON.parse(fs.readFileSync(FILE));
+  const id = parseInt(req.params.id);
+  data[id] = req.body;
+  fs.writeFileSync(FILE, JSON.stringify(data, null, 2));
+  res.sendStatus(200);
+});
+
+app.delete('/excluir-pergunta/:id', (req, res) => {
+  const data = JSON.parse(fs.readFileSync(FILE));
+  const id = parseInt(req.params.id);
+  data.splice(id, 1);
+  fs.writeFileSync(FILE, JSON.stringify(data, null, 2));
+  res.sendStatus(200);
+});
+
+app.listen(PORT, () => {
+  console.log(`Servidor rodando em http://localhost:${PORT}`);
+});

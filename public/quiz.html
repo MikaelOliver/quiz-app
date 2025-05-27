@@ -1,77 +1,100 @@
+<!-- <!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz - Língua Portuguesa</title>
+  <link rel="stylesheet" href="quiz.css">
+</head>
+<body>
+  <div class="quiz-container">
+    <h1>Quiz - Língua Portuguesa</h1>
+
+    <div class="filtros">
+      <select id="filtroSerie">
+        <option value="">Todas as Séries</option>
+        <option value="2º ano">2º ano</option>
+        <option value="5º ano">5º ano</option>
+        <option value="9º ano">9º ano</option>
+      </select>
+
+      <select id="filtroDificuldade">
+        <option value="">Todas as Dificuldades</option>
+        <option value="Fácil">Fácil</option>
+        <option value="Média">Média</option>
+        <option value="Difícil">Difícil</option>
+      </select>
+
+      <button onclick="iniciarQuiz()">Iniciar Quiz</button>
+    </div>
+
+    <div id="quizBox" class="escondido">
+      <div id="pergunta"></div>
+      <div id="alternativas"></div>
+      <div id="contador"></div>
+    </div>
+
+    <div id="resultado" class="escondido">
+      <h2>Resultado Final</h2>
+      <p id="pontuacao"></p>
+      <button onclick="iniciarQuiz()">Jogar Novamente</button>
+    </div>
+  </div>
+
+  <audio id="somAcerto" src="audios/acerto.mp3"></audio>
+  <audio id="somErro" src="audios/erro.mp3"></audio>
+
+  <script src="quiz.js"></script>
+</body>
+</html> -->
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title>Fazer o Quiz</title>
-  <style>
-    body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; }
-    button { margin-top: 10px; }
-    .correta { color: green; }
-    .errada { color: red; }
-  </style>
+  <title>Quiz - Língua Portuguesa</title>
+  <link rel="stylesheet" href="quiz.css">
 </head>
 <body>
-  <h1>Quiz</h1>
-  <div id="quizContainer"></div>
-  <p id="feedback"></p>
+  <div class="quiz-container">
+    <h1>Quiz - Língua Portuguesa</h1>
 
-  <script>
-    let perguntas = [];
-    let indiceAtual = 0;
+    <div id="inicio">
+      <input type="text" id="nomeParticipante" placeholder="Digite seu nome" />
+      <div class="filtros">
+        <select id="filtroSerie">
+          <option value="">Todas as Séries</option>
+          <option value="2º ano">2º ano</option>
+          <option value="5º ano">5º ano</option>
+          <option value="9º ano">9º ano</option>
+        </select>
 
-    async function carregarPerguntas() {
-      const res = await fetch('/perguntas');
-      perguntas = await res.json();
-      mostrarPergunta();
-    }
+        <select id="filtroDificuldade">
+          <option value="">Todas as Dificuldades</option>
+          <option value="Fácil">Fácil</option>
+          <option value="Média">Média</option>
+          <option value="Difícil">Difícil</option>
+        </select>
+      </div>
 
-    function mostrarPergunta() {
-  const container = document.getElementById('quizContainer');
-  const feedback = document.getElementById('feedback');
+      <button onclick="iniciarQuiz()">Iniciar Quiz</button>
+    </div>
 
-  feedback.textContent = '';
+    <div id="quizBox" class="escondido">
+      <div id="pergunta"></div>
+      <ul id="alternativas"></ul>
+      <div id="contador"></div>
+    </div>
 
-  if (indiceAtual >= perguntas.length) {
-    container.innerHTML = "<h2>Fim do quiz!</h2>";
-    return;
-  }
+    <div id="resultado" class="escondido">
+      <h2>Resultado Final</h2>
+      <p id="mensagemFinal"></p>
+      <button onclick="iniciarQuiz()">Jogar Novamente</button>
+    </div>
+  </div>
 
-  const p = perguntas[indiceAtual];
-  container.innerHTML = `
-    <h2>${p.pergunta}</h2>
-    ${p.alternativas.map((alt, i) => `
-      <button onclick="responder(${i})">${i + 1}. ${alt}</button>
-    `).join('<br>')}
-    <br><br>
-    <button id="proximaBtn" style="display:none;">Próxima Pergunta</button>
-  `;
+  <audio id="somAcerto" src="audios/acerto.mp3"></audio>
+  <audio id="somErro" src="audios/erro.mp3"></audio>
 
-  document.getElementById('proximaBtn').addEventListener('click', () => {
-    indiceAtual++;
-    mostrarPergunta();
-  });
-}
-    function responder(escolha) {
-      const p = perguntas[indiceAtual];
-      const feedback = document.getElementById('feedback');
-      const proximaBtn = document.getElementById('proximaBtn');
-
-      if (escolha === p.correta) {
-        feedback.textContent = "✅ Resposta correta!";
-        feedback.className = 'correta';
-      } else {
-        feedback.textContent = `❌ Errado! A resposta correta era: ${p.alternativas[p.correta]}`;
-        feedback.className = 'errada';
-      }
-
-      document.querySelectorAll('#quizContainer button').forEach(btn => {
-        if (btn.id !== "proximaBtn") btn.disabled = true;
-      });
-
-      proximaBtn.style.display = 'inline-block';
-    }
-
-    carregarPerguntas();
-  </script>
+  <script src="quiz.js"></script>
 </body>
 </html>

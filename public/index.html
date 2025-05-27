@@ -2,64 +2,62 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title>Quiz</title>
+  <title>Cadastro de Perguntas - Língua Portuguesa</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Adicionar Pergunta</h1>
-  <form id="quizForm">
-    <input type="text" placeholder="Pergunta" id="pergunta" required><br>
-    <input type="text" placeholder="Alternativa 1" id="alt1" required><br>
-    <input type="text" placeholder="Alternativa 2" id="alt2" required><br>
-    <input type="text" placeholder="Alternativa 3" id="alt3" required><br>
-    <input type="text" placeholder="Alternativa 3" id="alt4" required><br>
-    <input type="number" placeholder="Índice da correta (0-2)" id="correta" required><br>
-    <button type="submit">Salvar</button>
-  </form>
+  <div class="container">
+    <h1>Cadastro de Perguntas - Língua Portuguesa</h1>
+    <form id="quizForm">
+      <input type="text" id="pergunta" placeholder="Digite a pergunta" required>
+      <input type="text" id="alt1" placeholder="Alternativa A" required>
+      <input type="text" id="alt2" placeholder="Alternativa B" required>
+      <input type="text" id="alt3" placeholder="Alternativa C" required>
+      <input type="text" id="alt4" placeholder="Alternativa D" required>
+      <input type="number" id="correta" placeholder="Número da alternativa correta (0-3)" min="0" max="3" required>
+      <select id="dificuldade" required>
+        <option value="">Dificuldade</option>
+        <option value="Fácil">Fácil</option>
+        <option value="Média">Média</option>
+        <option value="Difícil">Difícil</option>
+      </select>
+      <select id="serie" required>
+        <option value="">Série</option>
+        <option value="2º ano">2º ano</option>
+        <option value="5º ano">5º ano</option>
+        <option value="9º ano">9º ano</option>
+      </select>
+      <button type="submit">Salvar</button>
+    </form>
 
-  <h2>Perguntas já cadastradas:</h2>
-  <ul id="listaPerguntas"></ul>
+    <h2>Perguntas Cadastradas</h2>
+    <ul id="listaPerguntas"></ul>
+  </div>
 
-  <script>
-    const form = document.getElementById('quizForm');
-    const lista = document.getElementById('listaPerguntas');
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <h3>Editar Pergunta</h3>
+      <input type="text" id="edit-pergunta">
+      <input type="text" id="edit-alt1">
+      <input type="text" id="edit-alt2">
+      <input type="text" id="edit-alt3">
+      <input type="text" id="edit-alt4">
+      <input type="number" id="edit-correta" min="0" max="3">
+      <select id="edit-dificuldade">
+        <option value="Fácil">Fácil</option>
+        <option value="Média">Média</option>
+        <option value="Difícil">Difícil</option>
+      </select>
+      <select id="edit-serie">
+        <option value="2º ano">2º ano</option>
+        <option value="5º ano">5º ano</option>
+        <option value="9º ano">9º ano</option>
+      </select>
+      <button id="salvarEdicao">Salvar</button>
+      <button onclick="fecharModal()">Cancelar</button>
+    </div>
+  </div>
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const pergunta = {
-        pergunta: document.getElementById('pergunta').value,
-        alternativas: [
-          document.getElementById('alt1').value,
-          document.getElementById('alt2').value,
-          document.getElementById('alt3').value,
-          document.getElementById('alt4').value
-        ],
-        correta: parseInt(document.getElementById('correta').value)
-      };
-
-      await fetch('/adicionar-pergunta', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(pergunta)
-      });
-
-      carregarPerguntas();
-      form.reset();
-    });
-
-    async function carregarPerguntas() {
-      const res = await fetch('/perguntas');
-      const perguntas = await res.json();
-
-      lista.innerHTML = '';
-      perguntas.forEach((p, i) => {
-        const li = document.createElement('li');
-        li.textContent = `${i + 1}. ${p.pergunta}`;
-        lista.appendChild(li);
-      });
-    }
-
-    carregarPerguntas();
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
